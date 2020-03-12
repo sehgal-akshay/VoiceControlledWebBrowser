@@ -21,55 +21,61 @@ import random
 from time import strftime
 
 
-# class Browser:
-#    def __init__(self, browser):
-#         self.browser = browser
-
-#     def switchTabForward(self, direction):
-#         if direction == 'forward':
-#             self.browser.switch_to_window(self.browser.window_handles[0])
-#         if direction == 'backward':
-#             self.browser.switch_to_window(self.browser.window_handles[1])
-
-#     def navigate(self, input):
-#         if input == 'forward':
-#             self.browser.forward()
-#         if input == 'backward':
-#             self.browser.back()
-
-
 def openChrome():
+    global tabFlag
+    tabFlag = False
     global browser
     browser = webdriver.Chrome()
     print(browser)
 
 
-def switchTabForward(direction):
+def switchTabForward(direction, flag):
     global browser
-    if direction == 'forward':
+    if flag == 'ignore':
+        if direction == 'forward':
+            browser.switch_to_window(browser.window_handles[browser.window_handles.index(
+                browser.current_window_handle)+1])
+        if direction == 'backward':
+            browser.switch_to_window(browser.window_handles[browser.window_handles.index(
+                browser.current_window_handle)-1])
+    if flag == 'first':
         browser.switch_to_window(browser.window_handles[0])
-    if direction == 'backward':
-        browser.switch_to_window(browser.window_handles[1])
+    if flag == 'last':
+        browser.switch_to_window(browser.window_handles[-1])
+    # print(browser.current_window_handle)
+    # print(browser.window_handles.index(browser.current_window_handle))
 
 
 def openWebpage(name):
     global browser
+    global tabFlag
     if name == 'facebook':
-        browser.get('https://www.facebook.com')
+        if tabFlag:
+            browser.execute_script(
+                '''window.open("https://www.facebook.com","_blank");''')
+        else:
+            browser.get('https://www.facebook.com')
+            tabFlag = True
         time.sleep(2)
         sofiaResponse('The requested website has been opened.')
-        # selectLinkOpeninNewTab = browser.find_element_by_css_selector(
-        #     "body").sendKeys(Keys.COMMAND, Keys.RETURN)
-        browser.execute_script(
-            '''window.open("http://stackoverflow.com","_blank");''')
 
     if name == 'twitter':
-        browser.get('https://www.twitter.com')
+        if tabFlag:
+            browser.execute_script(
+                '''window.open("https://www.twitter.com","_blank");''')
+        else:
+            browser.get('https://www.twitter.com')
+            tabFlag = True
         time.sleep(2)
         sofiaResponse('The requested website has been opened.')
 
     if name == 'google':
-        browser.get('https://www.google.com')
+        if tabFlag:
+            browser.execute_script(
+                '''window.open("https://www.google.com","_blank");''')
+        else:
+            browser.get('https://www.google.com')
+            tabFlag = True
         time.sleep(2)
         sofiaResponse('The requested website has been opened.')
 
@@ -105,6 +111,23 @@ def sofiaResponse(audio):
     for line in audio.splitlines():
         os.system("say " + audio)
 
+# web Scrapping
+
+
+def newsRead():
+    global browser
+    browser.get('https://news.google.com/?hl=en-US&gl=US&ceid=US:en')
+    elem = browser.find_elements_by_xpath('//*[@class="DY5T1d"]')
+    i = 0
+    li = []
+    sofiaResponse('Top five news for today are')
+    for x in elem:
+        i = i + 1
+        li.append(x.text + ' ')
+        sofiaResponse(x.text)
+        if i == 5:
+            break
+
 
 def assistant(command):
     global browser
@@ -119,12 +142,17 @@ def assistant(command):
                 openWebpage('twitter')
             if 'google' in command:
                 openWebpage('google')
-            if 'chrome' in command:
+            if 'browser' in command:
                 openChrome()
+    elif 'window' in command:
+        if 'first' in command:
+            switchTabForward('forward', 'first')
+        if 'last' in command:
+            switchTabForward('forward', 'last')
     elif 'forward' in command:
-        switchTabForward('forward')
+        switchTabForward('backward', 'ignore')
     elif 'backward' in command:
-        switchTabForward('backward')
+        switchTabForward('backward', 'ignore')
     elif 'shutdown' in command:
         sofiaResponse('Bye bye Sir. Have a nice day')
         sys.exit()
@@ -151,12 +179,7 @@ def assistant(command):
         10. top stories from google news (RSS feeds)
         11. tell me about xyz : tells you about xyz
         """)
-    # tab swtiching
-    elif 'tab' in command:
-        if('forward' in command):
-            switchTabForward('forward')
-        if('backward' in command):
-            switchTabForward('backward')
+    # maximize and minimize windows
     elif 'maximize' in command:
         maximize()
     elif 'minimize' in command:
@@ -170,6 +193,8 @@ def assistant(command):
             sofiaResponse(str(res.json()['joke']))
         else:
             sofiaResponse('oops!I ran out of jokes')
+    elif 'read me google news' in command:
+        newsRead()
     # top stories from google news
     elif 'news for today' in command:
         try:
@@ -195,6 +220,9 @@ def assistant(command):
             x = w.get_temperature(unit='celsius')
             sofiaResponse('Current weather in %s is %s. The maximum temperature is %0.2f and the minimum temperature is %0.2f degree celcius' % (
                 city, k, x['temp_max'], x['temp_min']))
+    elif 'close browser' in command:
+        global browser
+        browser.quit()
         # time
     elif 'time' in command:
         import datetime
@@ -208,33 +236,17 @@ def assistant(command):
         #     url = url + 'r/' + subreddit
         # webbrowser.open(url)
         # sofiaResponse('The Reddit content has been opened for you Sir.')
-    elif 'email' in command:
-        sofiaResponse('Who is the recipient?')
-        recipient = myCommand()
-        if 'rajat' in recipient:
-            sofiaResponse('What should I say to him?')
-            content = myCommand()
-            mail = smtplib.SMTP('smtp.gmail.com', 587)
-            mail.ehlo()
-            mail.starttls()
-            mail.login('your_email_address', 'your_password')
-            mail.sendmail('sender_email', 'receiver_email', content)
-            mail.close()
-            sofiaResponse(
-                'Email has been sent successfuly. You can check your inbox.')
-        else:
-            sofiaResponse('I don\'t know what you mean!')
     # play youtube song
     elif 'play me a song' in command:
-        path = '/Users/nageshsinghchauhan/Documents/videos/'
-        folder = path
-        for the_file in os.listdir(folder):
-            file_path = os.path.join(folder, the_file)
-            try:
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-            except Exception as e:
-                print(e)
+        # path = '/Users/nageshsinghchauhan/Documents/videos/'
+        # folder = path
+        # for the_file in os.listdir(folder):
+        #     file_path = os.path.join(folder, the_file)
+        #     try:
+        #         if os.path.isfile(file_path):
+        #             os.unlink(file_path)
+        #     except Exception as e:
+        #         print(e)
         sofiaResponse('What song shall I play Sir?')
         mysong = myCommand()
         if mysong:
