@@ -20,40 +20,40 @@ import wikipedia
 import random
 from time import strftime
 
-path = '/Users/akshaysehgal/Downloads/chromedriver'
-sys.path.append(path)
 
-# Creating an instance webdriver
+# class Browser:
+#    def __init__(self, browser):
+#         self.browser = browser
 
-driver: any
-# class Master:
-#     def __init__(self):
-#         self.browser = webdriver.Chrome()
+#     def switchTabForward(self, direction):
+#         if direction == 'forward':
+#             self.browser.switch_to_window(self.browser.window_handles[0])
+#         if direction == 'backward':
+#             self.browser.switch_to_window(self.browser.window_handles[1])
 
-
-class Browser:
-    def __init__(self, browser):
-        self.browser = browser
-
-    def switchTabForward(self, direction):
-        if direction == 'forward':
-            self.browser.switch_to_window(driver.window_handles[0])
-        if direction == 'backward':
-            self.browser.switch_to_window(driver.window_handles[1])
+#     def navigate(self, input):
+#         if input == 'forward':
+#             self.browser.forward()
+#         if input == 'backward':
+#             self.browser.back()
 
 
 def openChrome():
-    B1 = Browser(webdriver.Chrome())
-    print(B1)
-
-
-def openBrowser():
+    global browser
     browser = webdriver.Chrome()
-    driver = browser
+    print(browser)
+
+
+def switchTabForward(direction):
+    global browser
+    if direction == 'forward':
+        browser.switch_to_window(browser.window_handles[0])
+    if direction == 'backward':
+        browser.switch_to_window(browser.window_handles[1])
 
 
 def openWebpage(name):
-    browser = webdriver.Chrome()
+    global browser
     if name == 'facebook':
         browser.get('https://www.facebook.com')
         time.sleep(2)
@@ -74,12 +74,13 @@ def openWebpage(name):
         sofiaResponse('The requested website has been opened.')
 
 
-def navigate(input):
-    browser = webdriver.Chrome()
-    if input == 'forward':
-        browser.forward()
-    if input == 'backward':
-        browser.back()
+def maximize():
+    global browser
+    browser.maximize_window()
+
+
+def minimize():
+    browser.minimize_window()
 
 
 def myCommand():
@@ -106,6 +107,7 @@ def sofiaResponse(audio):
 
 
 def assistant(command):
+    global browser
     "if statements for executing commands"
     if 'open' in command:
         if command == 'open':
@@ -120,9 +122,9 @@ def assistant(command):
             if 'chrome' in command:
                 openChrome()
     elif 'forward' in command:
-        navigate('forward')
+        switchTabForward('forward')
     elif 'backward' in command:
-        navigate('forward')
+        switchTabForward('backward')
     elif 'shutdown' in command:
         sofiaResponse('Bye bye Sir. Have a nice day')
         sys.exit()
@@ -155,7 +157,10 @@ def assistant(command):
             switchTabForward('forward')
         if('backward' in command):
             switchTabForward('backward')
-
+    elif 'maximize' in command:
+        maximize()
+    elif 'minimize' in command:
+        minimize()
     # joke
     elif 'joke' in command:
         res = requests.get(
