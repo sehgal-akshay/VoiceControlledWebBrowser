@@ -23,7 +23,9 @@ import certifi
 
 
 def openChrome():
+    global browserFlag
     global tabFlag
+    browserFlag = True
     tabFlag = False
     global browser
     browser = webdriver.Chrome()
@@ -57,13 +59,20 @@ def initalPrompt():
 
 
 def ErrorPrompt():
-    sofiaResponse('I didn’t understand. I can help you with opening and closing of websites, switch tabs, read news for you, tell you about weather, time and jokes, login into facebook and more. Please refer to the set of commands to perform tasks.')
+    sofiaResponse('I didn’t understand. Say help me to know more.')
 
 
 def scrollBrowser():
     global browser
     browser.execute_script("window.scrollBy(0,1000)")
     # browserNotOpen()
+
+
+def logoutFacebook():
+    global browser
+    global tabFlag
+    elem = browser.find_element_by_xpath('//*')
+    elem.click
 
 
 def search():
@@ -88,35 +97,39 @@ def search():
 def openWebpage(name):
     global browser
     global tabFlag
-    if name == 'facebook':
-        if tabFlag:
-            browser.execute_script(
-                '''window.open("https://www.facebook.com","_blank");''')
-        else:
-            browser.get('https://www.facebook.com')
-            tabFlag = True
-        time.sleep(2)
-        sofiaResponse('The requested website has been opened.')
+    global browserFlag
+    if browserFlag:
+        if name == 'facebook':
+            if tabFlag:
+                browser.execute_script(
+                    '''window.open("https://www.facebook.com","_blank");''')
+            else:
+                browser.get('https://www.facebook.com')
+                tabFlag = True
+            time.sleep(2)
+            sofiaResponse('The requested website has been opened.')
 
-    if name == 'twitter':
-        if tabFlag:
-            browser.execute_script(
-                '''window.open("https://www.twitter.com","_blank");''')
-        else:
-            browser.get('https://www.twitter.com')
-            tabFlag = True
-        time.sleep(2)
-        sofiaResponse('The requested website has been opened.')
+        if name == 'twitter':
+            if tabFlag:
+                browser.execute_script(
+                    '''window.open("https://www.twitter.com","_blank");''')
+            else:
+                browser.get('https://www.twitter.com')
+                tabFlag = True
+            time.sleep(2)
+            sofiaResponse('The requested website has been opened.')
 
-    if name == 'google':
-        if tabFlag:
-            browser.execute_script(
-                '''window.open("https://www.google.com","_blank");''')
-        else:
-            browser.get('https://www.google.com')
-            tabFlag = True
-        time.sleep(2)
-        sofiaResponse('The requested website has been opened.')
+        if name == 'google':
+            if tabFlag:
+                browser.execute_script(
+                    '''window.open("https://www.google.com","_blank");''')
+            else:
+                browser.get('https://www.google.com')
+                tabFlag = True
+            time.sleep(2)
+            sofiaResponse('The requested website has been opened.')
+    else:
+        browserNotOpen()
 
 
 def maximize():
@@ -155,17 +168,23 @@ def sofiaResponse(audio):
 
 def newsRead():
     global browser
-    browser.get('https://news.google.com/?hl=en-US&gl=US&ceid=US:en')
-    elem = browser.find_elements_by_xpath('//*[@class="DY5T1d"]')
-    i = 0
-    li = []
-    sofiaResponse('Top five news for today are')
-    for x in elem:
-        i = i + 1
-        li.append(x.text + ' ')
-        sofiaResponse(x.text)
-        if i == 5:
-            break
+    global browserFlag
+    if browserFlag:
+        browser.get(
+            'https://news.google.com/?hl=en-US&tab=wn1&gl=US&ceid=US:en')
+        elem = browser.find_elements_by_xpath('//*[@class="DY5T1d"]')
+        i = 0
+        li = []
+        sofiaResponse('Top five news for today are')
+        for x in elem:
+            i = i + 1
+            li.append(x.text + ' ')
+            sofiaResponse(x.text)
+            if i == 5:
+                break
+    else:
+        sofiaResponse(
+            'Please say open browser command to open browser and then read news')
 
 
 def ErrorResponse():
@@ -198,8 +217,8 @@ def close(value):
     if value == 'browser':
         browser.quit()
     if value == 'window':
-        browser.switch_to_window(browser.window_handles[browser.window_handles.index(
-            browser.current_window_handle)])
+        # browser.switch_to_window(browser.window_handles[browser.window_handles.index(
+        #     browser.current_window_handle)])
         browser.close()
 
 
@@ -240,7 +259,7 @@ def assistant(command):
             sofiaResponse('Hello Sir. Good evening')
     elif 'help me' in command:
         sofiaResponse(
-            'You can use these commands and I will help you out: 1. Open reddit subreddit : Opens the subreddit in default browser. 2. Open xyz.com : replace xyz with any website name 3. Send email/email : Follow up questions such as recipient name, content will be asked in order. 4. Current weather in {cityname} : Tells you the current condition and temperture. 5. time : Current system time')
+            'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command First window, last window, forward and backward 5. Close and open browser 6. Maximize and Minimize browser 7. Scroll web page')
     # maximize and minimize windows
     elif 'maximize' in command:
         maximize()
@@ -255,7 +274,7 @@ def assistant(command):
             sofiaResponse(str(res.json()['joke']))
         else:
             sofiaResponse('oops!I ran out of jokes')
-    elif 'read me news' in command:
+    elif 'read news' in command:
         newsRead()
     elif 'search' in command:
         search()
@@ -273,6 +292,8 @@ def assistant(command):
     #             sofiaResponse(news.title.text.encode('utf-8'))
     #     except Exception as e:
     #         print(e)
+    elif 'logout facebook' in command:
+        logoutFacebook()
     elif 'login facebook' in command:
         loginFacebook()
     # current weather
@@ -331,6 +352,7 @@ def assistant(command):
         ErrorPrompt()
 
 
+browserFlag = False
 tabFlag = False
 initalPrompt()
 while True:
