@@ -33,7 +33,7 @@ def assistant(command):
     # if statements for executing commands
     # browserResponse('Processing')
     # def beep(x): return os.system("echo -n '\a';sleep 0.2;" * x)
-    browserResponse('processing')
+    beepy.beep(sound=3)
     if 'facebook' in command and 'open' not in command and 'login' not in command:
         browserResponse('Do you want me to login or open the facebook webpage')
         cache.add('facebook')
@@ -71,7 +71,7 @@ def assistant(command):
             browserResponse('Hello Sir. Good afternoon')
         else:
             browserResponse('Hello Sir. Good evening')
-    elif 'help me' in command:
+    elif 'help me' in command or 'do' in command:
         browserResponse(
             'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command First window, last window, forward and backward 5. Close and open browser 6. Maximize and Minimize browser 7. Scroll web page 8. Search content by saying search')
     # maximize and minimize windows

@@ -112,9 +112,16 @@ def openWebpage(name):
 def newsRead():
     global browser
     global browserFlag
+    global tabFlag
     if browserFlag:
-        browser.get(
-            'https://news.google.com/?hl=en-US&tab=wn1&gl=US&ceid=US:en')
+        if tabFlag:
+            browser.execute_script(
+                '''window.open("https://news.google.com/?hl=en-US&tab=wn1&gl=US&ceid=US:en","_blank");''')
+            time.sleep(10)
+        else:
+            browser.get(
+                'https://news.google.com/?hl=en-US&tab=wn1&gl=US&ceid=US:en')
+            tabFlag = True
         elem = browser.find_elements_by_xpath('//*[@class="DY5T1d"]')
         i = 0
         li = []
