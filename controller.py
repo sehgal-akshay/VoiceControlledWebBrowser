@@ -190,7 +190,7 @@ def scrollBrowser():
     # browserNotOpen()
 
 
-def switchTabForward(direction, flag):
+def switchTab(direction, flag):
     global browser
     if browserFlag:
         if flag == 'ignore':

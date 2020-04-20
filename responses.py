@@ -8,11 +8,6 @@ def browserAssistantResponse(audio):
         os.system("say " + audio)
 
 
-def ErrorResponse():
-    browserAssistantResponse(
-        'I did not understand that. I can help you with time, opening and closing of browser and')
-
-
 def ErrorPrompt():
     beepy.beep(sound=3)
     browserAssistantResponse(

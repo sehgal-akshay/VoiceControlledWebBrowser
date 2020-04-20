@@ -16,7 +16,6 @@ import urllib.request as urllib2
 import json
 from bs4 import BeautifulSoup as soup
 from urllib.request import urlopen
-import wikipedia
 import random
 from time import strftime
 import vlc
@@ -53,13 +52,13 @@ def assistant(command):
             browserResponse('What you want me to open')
     elif 'window' in command:
         if 'first' in command:
-            switchTabForward('forward', 'first')
+            switchTab('forward', 'first')
         if 'last' in command:
-            switchTabForward('forward', 'last')
+            switchTab('forward', 'last')
     elif 'forward' in command:
-        switchTabForward('backward', 'ignore')
+        switchTab('backward', 'ignore')
     elif 'backward' in command:
-        switchTabForward('backward', 'ignore')
+        switchTab('backward', 'ignore')
     elif 'shutdown' in command:
         browserResponse('Bye bye Sir. Have a nice day')
         sys.exit()
