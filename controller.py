@@ -180,11 +180,14 @@ def loginFacebook():
         loginFacebook()
 
 
-def scrollBrowser():
+def scrollBrowser(flag):
     global browser
     global browserFlag
     if browserFlag:
-        browser.execute_script("window.scrollBy(0,1000)")
+        if flag == 'down':
+            browser.execute_script("window.scrollBy(0,1000)")
+        elif flag == 'up':
+            browser.execute_script("window.scrollBy(0,-1000)")
     else:
         browserNotOpen()
     # browserNotOpen()

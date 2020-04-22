@@ -70,6 +70,10 @@ def assistant(command):
             browserResponse('Hello Sir. Good afternoon')
         else:
             browserResponse('Hello Sir. Good evening')
+    elif 'scroll' in command and 'up' in command:
+        scrollBrowser('up')
+    elif 'scroll' in command and 'down' in command:
+        scrollBrowser('down')
     elif 'help me' in command or 'do' in command:
         browserResponse(
             'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command First window, last window, forward and backward 5. Close and open browser 6. Maximize and Minimize browser 7. Scroll web page 8. Search content by saying search')
@@ -111,8 +115,6 @@ def assistant(command):
             x = w.get_temperature(unit='celsius')
             browserResponse('Current weather in %s is %s. The maximum temperature is %0.2f and the minimum temperature is %0.2f degree celcius' % (
                 city, k, x['temp_max'], x['temp_min']))
-    elif 'scroll' in command:
-        scrollBrowser()
     elif 'close' in command:
         if 'window' in command:
             close('window')
