@@ -50,15 +50,12 @@ def assistant(command):
             openChrome()
         else:
             browserResponse('What you want me to open')
-    elif 'window' in command:
-        if 'first' in command:
-            switchTab('forward', 'first')
-        if 'last' in command:
-            switchTab('forward', 'last')
-    elif 'forward' in command:
-        switchTab('backward', 'ignore')
-    elif 'backward' in command:
-        switchTab('backward', 'ignore')
+    elif 'switch' in command:
+        switchTab()
+    # elif 'forward' in command:
+    #     switchTab('backward', 'ignore')
+    # elif 'backward' in command:
+    #     switchTab('backward', 'ignore')
     elif 'shutdown' in command:
         browserResponse('Bye bye Sir. Have a nice day')
         sys.exit()
@@ -74,9 +71,6 @@ def assistant(command):
         scrollBrowser('up')
     elif 'scroll' in command and 'down' in command:
         scrollBrowser('down')
-    elif 'help me' in command or 'do' in command:
-        browserResponse(
-            'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command First window, last window, forward and backward 5. Close and open browser 6. Maximize and Minimize browser 7. Scroll web page 8. Search content by saying search')
     # maximize and minimize windows
     elif 'maximize' in command:
         maximize()
@@ -127,7 +121,9 @@ def assistant(command):
         now = datetime.datetime.now()
         browserResponse('Current time is %d hours %d minutes' %
                         (now.hour, now.minute))
-
+    elif 'help me' in command or 'do' in command:
+        browserResponse(
+            'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command First window, last window, forward and backward 5. Close and open browser 6. Maximize and Minimize browser 7. Scroll web page 8. Search content by saying search')
     # play youtube song
     # elif 'play me a song' in command:
     #     browserResponse('What song shall I play Sir?')

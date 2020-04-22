@@ -51,12 +51,15 @@ def search():
             # tabflag
             browser.execute_script(
                 '''window.open("https://www.google.com","_blank");''')
+            updateParent()
         else:
             browser.get('https://www.google.com')
             tabFlag = True
+            setParent()
     else:
         openChrome()
         browser.get('https://www.google.com')
+        setParent()
         tabFlag = True
     elem = browser.find_element_by_name('q')
     elem.clear()
@@ -118,10 +121,12 @@ def newsRead():
             browser.execute_script(
                 '''window.open("https://news.google.com/?hl=en-US&tab=wn1&gl=US&ceid=US:en","_blank");''')
             time.sleep(10)
+            updateParent()
         else:
             browser.get(
                 'https://news.google.com/?hl=en-US&tab=wn1&gl=US&ceid=US:en')
             tabFlag = True
+            setParent()
         elem = browser.find_elements_by_xpath('//*[@class="DY5T1d"]')
         i = 0
         li = []
@@ -143,14 +148,23 @@ def close(value):
     global browser
     global tabFlag
     global browserFlag
+    global parent
     if value == 'browser':
         browser.quit()
         tabFlag = False
         browserFlag = False
+        parent = None
     if value == 'window':
-        # browser.switch_to_window(browser.window_handles[browser.window_handles.index(
-        #     browser.current_window_handle)])
-        browser.close()
+        if browser:
+            length = len(browser.window_handles)
+            if(length > 1):
+                browser.close()
+                updateParent()
+            else:
+                browser.quit()
+                tabFlag = False
+                browserFlag = False
+                parent = None
 
 
 def loginFacebook():
@@ -193,22 +207,38 @@ def scrollBrowser(flag):
     # browserNotOpen()
 
 
-def switchTab(direction, flag):
+def switchTab():
     global browser
+    global browserFlag
     if browserFlag:
-        if flag == 'ignore':
-            if direction == 'forward':
-                browser.switch_to_window(browser.window_handles[browser.window_handles.index(
-                    browser.current_window_handle)+1])
-            if direction == 'backward':
-                browser.switch_to_window(browser.window_handles[browser.window_handles.index(
-                    browser.current_window_handle)-1])
-            if flag == 'first':
-                browser.switch_to_window(browser.window_handles[0])
-            if flag == 'last':
-                browser.switch_to_window(browser.window_handles[-1])
+        updateParent()
     else:
         browserNotOpen()
+
+
+def setParent():
+    global parent
+    global browser
+    print('set parent')
+    parent = browser.window_handles[0]
+    print(parent)
+
+
+def updateParent():
+    global parent
+    # global child
+    global browser
+    if parent:
+        print(parent)
+        for entity in browser.window_handles:
+            if entity != parent:
+                print('here')
+                browser.switch_to_window(entity)
+                browser.switch_to.window(entity)
+                parent = entity
+                break
+            print(entity)
+    print(parent)
 
 
 def openChrome():
