@@ -56,7 +56,7 @@ def assistant(command):
     #     switchTab('backward', 'ignore')
     # elif 'backward' in command:
     #     switchTab('backward', 'ignore')
-    elif 'shutdown' in command:
+    elif 'shut down' in command:
         browserResponse('Bye bye Sir. Have a nice day')
         sys.exit()
     elif 'hello' in command:
@@ -121,9 +121,6 @@ def assistant(command):
         now = datetime.datetime.now()
         browserResponse('Current time is %d hours %d minutes' %
                         (now.hour, now.minute))
-    elif 'help me' in command or 'do' in command:
-        browserResponse(
-            'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command First window, last window, forward and backward 5. Close and open browser 6. Maximize and Minimize browser 7. Scroll web page 8. Search content by saying search')
     # play youtube song
     # elif 'play me a song' in command:
     #     browserResponse('What song shall I play Sir?')
@@ -171,23 +168,26 @@ def assistant(command):
                     flag = 1
                     final_url = 'https://www.youtube.com' + vid['href']
                     url_list.append(final_url)
-                    print(url_list)
+                    # print(url_list)
                     url = url_list[0]
-                    print(url)
+                    # print(url)
             ydl_opts = {}
             os.chdir(path)
-            with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
-            media = vlc.MediaPlayer(path)
-            media.play()
+            try:
+                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([url])
+            except:
+                print('error caught')
+
+            # media = vlc.MediaPlayer(path)
+            # media.play()
             # p = vlc.MediaPlayer(path)
             # p.play()
-            if flag == 0:
-                browserResponse('I have not found anything in Youtube ')
-
-        if flag == 0:
-            browserResponse(
-                'I have not found anything in Youtube ')
+            # if flag == 0:
+            #     browserResponse('I have not found anything in Youtube ')
+    elif 'help me' in command or 'do' in command:
+        browserResponse(
+            'You can use these commands and I will help you out: 1. Open xyz.com : replace xyz with facebook, twitter or google website name 2. Ask for Weather in any city, time, joke. 3. Login facebook 4.Read me news 4. Switch tabs say command switch 5. Close and open browser 6. close window 6. Maximize and Minimize browser 7. Scroll web page up or down 8. Search content by saying search 9. Download songs')
     elif len(command) != 0:
         ErrorPrompt()
 
